@@ -1,26 +1,22 @@
 # 20/06/2015
 # Dom Bennett
-# Building a wordcloud with PREDICTS abstracts
+# Building a wordcloud with abstracts
+
+# DIRS
+data.dir <- '1_parsed'
+out.dir <- '2_clouds'
+if (!file.exists (out.dir)) {
+  dir.create(out.dir)
+}
 
 # LIBS
 # use install.packages([NAME OF PACKAGE])
 library(wordcloud)
 library(tm)
 
-# READ AND WRITE DATA
-predicts.pubs <- readRDS(file.path ("predicts",
-                                    'predicts_bib-2015-06-12-02-45-49.rds'))
-if (!file.exists ('abstracts')) {
-  dir.create('abstracts')
-}
-write.table (predicts.pubs$Abstract,
-             file.path ('abstracts', 'abstracts.txt'),
-             quote=FALSE, row.names=FALSE, col.names=FALSE)
-rm(predicts.pubs)
-
 # WORDCLOUD
 # create corpus
-corp <- VCorpus (DirSource ('abstracts'))
+corp <- VCorpus (DirSource (1_parsed))
 # sort chracters
 corp <- tm_map(corp, removePunctuation)
 corp <- tm_map(corp, content_transformer(tolower))
