@@ -1,0 +1,11 @@
+# R files
+*RData
+*RHistory
+*Rproj*
+
+# Data
+*.rds
+*.pdf
+*.jpeg
+*.csv
+*.txt
