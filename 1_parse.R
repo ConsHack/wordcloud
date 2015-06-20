@@ -9,39 +9,55 @@ if (!file.exists (out.dir)) {
   dir.create(out.dir)
 }
 
+# PARAMETERS
+slot <- 'title'
+
 # EXTRACT PREDICTS ABSTRACTS
-predicts.pubs <- readRDS(file.path ("predicts",
+predicts.pubs <- readRDS(file.path (data.dir, "predicts",
                                     'predicts_bib-2015-06-12-02-45-49.rds'))
-write.table (predicts.pubs$Abstract,
-             file.path (out.dir, 'predicts_abstracts.txt'),
+if (slot == 'title') {
+  output <- predicts.pubs[,'Source_title']
+} else {
+  output <- predicts.pubs[,'Abstract']
+}
+write.table (output,
+             file.path (out.dir, 'predicts.txt'),
              quote=FALSE, row.names=FALSE, col.names=FALSE)
 rm(predicts.pubs)
 
 # EXTRACT NON-PREDICTS ABSTRACTS
 # read in as lines -- if 'incomplete final line error' add return at bottom of file
-raw.data <- readLines (file.path (data.dir, 'non_predicts_abstracts.txt'))
-lines <- ''
-add <- FALSE
-for (line in raw.data) {
-  # go through lines removing just abstracts
-  if (grepl ('^AB', line)) {
-    add <- TRUE
-    line <- sub ('AB', '', line)
-  }
-  if (grepl ('^TC', line)) {
-    add <- FALSE
-  }
-  if (add) {
-    lines <- paste (lines, line)
-  }
-}
-write.table (lines, file=file.path (out.dir, 'non_predicts_abstracts.txt'))
-rm (raw.data)
+# if (slot == 'abstracts') {
+#   raw.data <- read.delim (file.path (data.dir, 'non_predicts_abstracts.txt'))[,1]
+# } else {
+#   raw.data <- read.delim (file.path (data.dir, 'non_predicts_title.txt'))[,1]
+# }
+# lines <- ''
+# add <- FALSE
+# for (line in raw.data) {
+#   # go through lines removing just abstracts
+#   if (grepl ('^AB', line)) {
+#     add <- TRUE
+#     line <- sub ('AB', '', line)
+#   }
+#   if (grepl ('^TC', line)) {
+#     add <- FALSE
+#   }
+#   if (add) {
+#     lines <- paste (lines, line)
+#   }
+# }
+# write.table (lines, file=file.path (out.dir, 'non_predicts.txt'))
+# rm (raw.data)
 
 # EXTRACT LPI ABSTRACTS
 # only needs moving
-raw.data <- read.delim (file.path (data.dir, 'lpi_abstracts.txt'))[,1]
-write.table (raw.data, file.path (out.dir, 'lpi_abstracts.txt'),
+if (slot == 'abstracts') {
+  raw.data <- read.delim (file.path (data.dir, 'lpi_abstracts.txt'))[,1]
+} else {
+  raw.data <- read.delim (file.path (data.dir, 'lpi_titles.txt'))[,1]
+}
+write.table (raw.data, file.path (out.dir, 'lpi.txt'),
              quote=FALSE, row.names=FALSE, col.names=FALSE)
 
 # EXTRACT PUBMED ABSTRACTS
